@@ -7,6 +7,7 @@ import time
 import wave
 from scipy.io.wavfile import write
 import numpy as np
+import subprocess as sp
 from openvino.inference_engine import IECore
 
 
@@ -23,8 +24,10 @@ def build_argparser():
     args = parser.add_argument_group('Options')
     args.add_argument('-h', '--help', action='help', default=SUPPRESS, help='Show this help message and exit.')
 
+    args.add_argument('--input', type=str, required=True,
+                      help="Required. input file of video or audio")
     args.add_argument('--audioname', type=str, required=True,
-                      help="Required. audio name of recorded file")
+                      help="Required. audio name for the recorded file")
     args.add_argument('-m', "--model", type=str, required=True,
                       help="Required. Path to an .xml file with a trained model.")
     args.add_argument("-l", "--cpu_extension", type=str, default=None,
@@ -102,9 +105,10 @@ def main():
     
     detect_flag = False
     time_count = 0
+    save_duration = 5
     for idx, chunk in enumerate(audio.chunks(length, hop, num_chunks=batch_size)):
-        #1,1,16000 one chunk, one second
-        if time_count == 5:
+        #1,1,16000 one chunk
+        if time_count > save_duration / (length / audio.samplerate):
             detect_flag = False
             time_count = 0
         if detect_flag:
@@ -124,13 +128,22 @@ def main():
             label = np.argmax(data)
             if labels[label] == args.soundtype:
                 detect_flag = True
-                detected_chunk = audio.origin_data[(idx*batch_size + batch)*hop: (idx*batch_size + batch)*hop + audio.samplerate*5,:]
+                detected_chunk = audio.origin_data[(idx*batch_size + batch)*hop: (idx*batch_size + batch)*hop + audio.samplerate*save_duration,:]
                 write(str(np.ceil(start_time))+'.wav', audio.samplerate, detected_chunk)
-            
-            if start_time < audio.duration():
-                log.info("[{:.2f}-{:.2f}] - {:6.2%} {:s}".format(start_time, end_time, data[label],
-                                                              labels[label] if labels else "Class {}".format(label)))
+                
+                #save video clip
+                if "mp4" in args.input:
+                    sp.call('ffmpeg.exe -ss {} -i "{}" -t {} -c copy {} -loglevel quiet'.format(np.ceil(start_time), args.input, save_duration, str(int(np.ceil(start_time)))+'.mp4'), shell=True)
 
+            if start_time < audio.duration():
+                if detect_flag == True:
+                    log.info("[{:.2f}-{:.2f}] - {:6.2%} {:s} File is saved.".format(start_time, end_time, data[label],
+                                                              labels[label] if labels else "Class {}".format(label)))
+                else:
+                    log.info("[{:.2f}-{:.2f}] - {:6.2%} {:s}".format(start_time, end_time, data[label],
+                                                              labels[label] if labels else "Class {}".format(label)))
+            if detect_flag == True:
+                break
     #logging.info("Average infer time - {:.1f} ms per clip".format(infer_time / clips * 1000))
 
 
