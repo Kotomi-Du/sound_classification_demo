@@ -1,0 +1,13 @@
+python/__pycache__
+#build package
+python/build
+python/binary_app
+python/main.spec
+
+
+#test data
+*wav
+*txt
+
+#experimental code
+sound_spectrum.py
