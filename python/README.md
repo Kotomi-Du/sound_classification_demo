@@ -1,85 +1,213 @@
-# Sound Classification Python\* Demo
+* Please use the command below 
+`main.exe -m "model\aclnet_des_53_fp32.xml" --audioname test.wav --input ju.mp4`
 
-Demo application for sound classification algorithm.
+* test.wav will be generate as well as the log below
+[ INFO ] Creating Inference Engine
+[ INFO ] Loading model C:\Users\yarudu\OneDrive - Intel Corporation\Documents\project\sound_classification_demo\python\model\aclnet_des_53_fp32.xml
+[ INFO ] Loading model to the plugin
+[ INFO ] Preparing input
+Available devices:
 
-## How It Works
+0:       Microsoft Sound Mapper - Input
+         MME
 
-On startup the demo application reads command line parameters and loads a network to Inference engine. It uses only audio files in `wav` format. Audio should be converted to model's sample rate using `-sr/--sample_rate` option, if sample rate of audio differs from sample rate of model (e.g. [AclNet](../../../models/public/aclnet/README.md) expected 16kHz audio). After reading the audio, it is sliced into clips to fit model input (clips are allowed to overlap with `-ol/--overlap` option) and each clip is processed separately with its own prediction.
+1:       Microphone Array (Realtek(R) Au
+         MME
 
-## Preparing to Run
+2:       Microsoft Sound Mapper - Output
+         MME
 
-For demo input image or video files you may refer to [Media Files Available for Demos](../../README.md#Media-Files-Available-for-Demos).
-The list of models supported by the demo is in `<omz_dir>/demos/sound_classification_demo/python/models.lst` file.
-This file can be used as a parameter for [Model Downloader](../../../tools/downloader/README.md) and Converter to download and, if necessary, convert models to OpenVINO Inference Engine format (\*.xml + \*.bin).
+3:       Speaker/HP (Realtek(R) Audio)
+         MME
 
-An example of using the Model Downloader:
+4:       Speaker/HP (Realtek(R) Audio)
+         Windows WASAPI
 
-```sh
-python3 <omz_dir>/tools/downloader/downloader.py --list models.lst
-```
+5:       Microphone Array (Realtek(R) Audio)
+         Windows WASAPI
 
-An example of using the Model Converter:
+6:       Speakers (Realtek HD Audio output)
+         Windows WDM-KS
 
-```sh
-python3 <omz_dir>/tools/downloader/converter.py --list models.lst
-```
+7:       Microphone Array (Realtek HD Audio Mic input)
+         Windows WDM-KS
 
-### Supported Models
+8:       Headphones ()
+         Windows WDM-KS
 
-* aclnet
-* aclnet-int8
+9:       Headset (@System32\drivers\bthhfenum.sys,#2;%1 Hands-Free AG Audio%0
+;(Adina’s AirPods Pro))
+         Windows WDM-KS
 
-> **NOTE**: Refer to the tables [Intel's Pre-Trained Models Device Support](../../../models/intel/device_support.md) and [Public Pre-Trained Models Device Support](../../../models/public/device_support.md) for the details on models inference support at different devices.
+10:      Headset (@System32\drivers\bthhfenum.sys,#2;%1 Hands-Free AG Audio%0
+;(Adina’s AirPods Pro))
+         Windows WDM-KS
 
-## Running
+11:      Headphones ()
+         Windows WDM-KS
 
-Run the application with the `-h` option to see the usage message:
+Choose device [{'index': 1, 'structVersion': 2, 'name': 'Microphone Array (Realtek(R) Au', 'hostApi': 0, 'maxInputChannels': 2, 'maxOutputChannels': 0, 'defaultLowInputLatency': 0.09, 'defaultLowOutputLatency': 0.09, 'defaultHighInputLatency': 0.18, 'defaultHighOutputLatency': 0.18, 'defaultSampleRate': 44100.0}]: 4
 
-```
-usage: sound_classification_demo.py [-h] -i INPUT -m MODEL [-l CPU_EXTENSION]
-                                    [-d DEVICE] [--labels LABELS]
-                                    [-sr SAMPLE_RATE] [-ol OVERLAP]
+Selection is output. Using loopback mode.
 
-Options:
-  -h, --help            Show this help message and exit.
-  -i INPUT, --input INPUT
-                        Required. Input to process
-  -m MODEL, --model MODEL
-                        Required. Path to an .xml file with a trained model.
-  -l CPU_EXTENSION, --cpu_extension CPU_EXTENSION
-                        Optional. Required for CPU custom layers. Absolute
-                        path to a shared library with the kernels
-                        implementations.
-  -d DEVICE, --device DEVICE
-                        Optional. Specify the target device to infer on; CPU,
-                        GPU, HDDL or MYRIAD is acceptable. The demo
-                        will look for a suitable plugin for device specified.
-                        Default value is CPU
-  --labels LABELS       Optional. Labels mapping file
-  -sr SAMPLE_RATE, --sample_rate SAMPLE_RATE
-                        Optional. Set sample rate for audio input
-  -ol OVERLAP, --overlap OVERLAP
-                        Optional. Set the overlapping between audio clip in
-                        samples or percent
-```
-
-Running the application with the empty list of options yields the usage message given above and an error message.
-
-You can use the following command to do inference on GPU with a pre-trained sound classification model and conversion of input audio to sample rate of 16000:
-
-```sh
-python3 sound_classification_demo.py -i <path_to_wav>/input_audio.wav -m <path_to_model>/aclnet.xml -d GPU --sample_rate 16000
-```
-
-## Demo Output
-
-The demo uses console to display the predictions. It shows classification of each clip with timing of it and total prediction of whole audio.
-
-## See Also
-
-* [Open Model Zoo Demos](../../README.md)
-* [Model Optimizer](https://docs.openvinotoolkit.org/latest/_docs_MO_DG_Deep_Learning_Model_Optimizer_DevGuide.html)
-* [Model Downloader](../../../tools/downloader/README.md)
+Record time in seconds [5]: 10
+48000.0
+Starting...
+100%|████████████████████████████████████████████████████████████████████████████████| 937/937 [00:09<00:00, 93.70it/s]
+End.
+[ INFO ] Starting inference
+[ INFO ] [0.00-0.33] - 37.33% Wind
+[ INFO ] [0.33-0.67] - 91.79% Door knock
+[ INFO ] [0.67-1.00] - 56.38% Airplane
+[ INFO ] [1.00-1.33] - 83.01% Wind
+[ INFO ] [1.33-1.67] - 49.53% Wind
+[ INFO ] [1.67-2.00] - 92.53% Thunderstorm
+[ INFO ] [2.00-2.33] - 98.89% Thunderstorm
+[ INFO ] [2.33-2.67] - 99.93% Fireworks
+[ INFO ] [2.67-3.00] - 36.80% Wind
+[ INFO ] [3.00-3.33] - 94.04% Airplane
+[ INFO ] [3.33-3.67] - 84.29% Fireworks
+[ INFO ] [3.67-4.00] - 59.82% Airplane
+[ INFO ] [4.00-4.33] - 99.81% Wind
+[ INFO ] [4.33-4.67] - 97.00% Wind
+[ INFO ] [4.67-5.00] - 85.25% Airplane
+[ INFO ] [5.00-5.33] - 98.87% Train
+[ INFO ] [5.33-5.67] - 37.28% Door knock
+[ INFO ] [5.67-6.00] - 86.30% Airplane
+[ INFO ] [6.00-6.33] - 99.32% Crowd
+[ INFO ] [6.33-6.67] - 99.90% Gunshot
+[ INFO ] [8.33-8.67] - 89.39% Thunderstorm
+[ INFO ] [8.67-9.00] - 48.81% Fireworks
+[ INFO ] [9.00-9.33] - 81.33% Thunderstorm
+[ INFO ] [9.33-9.67] - 95.89% Thunderstorm
+[ INFO ] [9.67-10.00] - 86.43% Airplane
 
 
-`python sound_classification_demo.py -i C:\Users\Kotomi\Downloads\chongfeng.wav -m C:\Users\Kotomi\Downloads\aclnet_des_53_fp32.xml -d CPU --sample_rate 16000`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
