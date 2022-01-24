@@ -1,4 +1,5 @@
 import sound_record 
+from sound_record import textcolors
 from sound_classification import AudioSource
 from argparse import ArgumentParser, SUPPRESS
 import logging
@@ -137,8 +138,8 @@ def main():
 
             if start_time < audio.duration():
                 if detect_flag == True:
-                    log.info("[{:.2f}-{:.2f}] - {:6.2%} {:s} File is saved.".format(start_time, end_time, data[label],
-                                                              labels[label] if labels else "Class {}".format(label)))
+                    log.info("[{:.2f}-{:.2f}] - {:6.2%} {:s} {}File is saved.{}".format(start_time, end_time, data[label],
+                                                              labels[label] if labels else "Class {}".format(label) ,textcolors.green, textcolors.end))
                 else:
                     log.info("[{:.2f}-{:.2f}] - {:6.2%} {:s}".format(start_time, end_time, data[label],
                                                               labels[label] if labels else "Class {}".format(label)))

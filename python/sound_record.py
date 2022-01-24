@@ -2,7 +2,7 @@ import pyaudio
 import wave
 import os
 import numpy as np
-from tqdm import trange
+from tqdm import tqdm
 defaultframes = 512
 
 class textcolors:
@@ -89,7 +89,7 @@ def start_record(audioname):
             print (textcolors.fail + "Selection is input and does not support loopback mode. Quitting.\n" + textcolors.end)
             exit()
 
-    recordtime = int(input("Record time in seconds [" + textcolors.blue + str(recordtime) + textcolors.end + "]: ") or recordtime)
+    
     #print(device_info["defaultSampleRate"])
     #Open stream
     channelcount = device_info["maxInputChannels"] if (device_info["maxOutputChannels"] < device_info["maxInputChannels"]) else device_info["maxOutputChannels"]
@@ -102,13 +102,26 @@ def start_record(audioname):
                     as_loopback = useloopback)
 
     #Start Recording
-    print (textcolors.blue + "Starting..." + textcolors.end)
-
+    print (textcolors.blue + "Starting...\nPress q to end the recoding" + textcolors.end)
+    import keyboard
+    
+    total = 10000
+    pbar = tqdm(total)
+    while True:
+        recorded_frames.append(stream.read(defaultframes))
+        pbar.update(1)
+        if keyboard.is_pressed("q"):
+            print("\nq pressed, end recoding")
+            break
+    pbar.close()
+    '''   
+    recordtime = int(input("Record time in seconds [" + textcolors.blue + str(recordtime) + textcolors.end + "]: ") or recordtime)    
     for i in trange(0, int(int(device_info["defaultSampleRate"]) / defaultframes * recordtime)):
         recorded_frames.append(stream.read(defaultframes))
         #print(".")
     
     print (textcolors.blue + "End." + textcolors.end)
+    '''
     #Stop Recording
 
     stream.stop_stream()
