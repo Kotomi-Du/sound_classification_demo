@@ -5,6 +5,7 @@ from argparse import ArgumentParser, SUPPRESS
 import logging
 import sys
 import time
+import os
 import wave
 from scipy.io.wavfile import write
 import numpy as np
@@ -54,6 +55,10 @@ def main():
 
     logging.basicConfig(format="[ %(levelname)s ] %(message)s", level=logging.INFO, stream=sys.stdout)
     log = logging.getLogger()
+    
+    if not os.path.exists(args.input):
+        log.warning("There is no such file: {}".format(args.input))
+        return
         
     #sound_record.start_record()
     
@@ -138,7 +143,7 @@ def main():
 
             if start_time < audio.duration():
                 if detect_flag == True:
-                    log.info("[{:.2f}-{:.2f}] - {:6.2%} {:s} {}File is saved.{}".format(start_time, end_time, data[label],
+                    log.info("[{:.2f}-{:.2f}] - {:6.2%} {:s} {}File is saved.{}".format(start_time, start_time + save_duration, data[label],
                                                               labels[label] if labels else "Class {}".format(label) ,textcolors.green, textcolors.end))
                 else:
                     log.info("[{:.2f}-{:.2f}] - {:6.2%} {:s}".format(start_time, end_time, data[label],
