@@ -4,10 +4,13 @@ python/build
 python/binary_app
 python/main.spec
 
-
 #test data
 *wav
 *txt
+
+#output data
+python/*wav
+python/*mp4
 
 #experimental code
 sound_spectrum.py

@@ -32,29 +32,43 @@ def start_record(audioname):
 
     #Set default to first in list or ask Windows
     try:
-        default_device_index = p.get_default_input_device_info()
+        default_device_index = p.get_default_output_device_info()['index']
     except IOError:
         default_device_index = -1
+    
+    input_info = input("use default speaker device for recording (Y or N):") or "Y"
+    if input_info == "Y" or input_info == "y":
+        use_default_device_flag = True
+    else:
+        use_default_device_flag = False
+        
+    if use_default_device_flag == False:
+        #Select Device
+        print (textcolors.blue + "Available devices:\n" + textcolors.end)
+        for i in range(0, p.get_device_count()):
+            info = p.get_device_info_by_index(i)
+            print (textcolors.green + str(info["index"]) + textcolors.end + ": \t %s \n \t %s \n" % (info["name"], p.get_host_api_info_by_index(info["hostApi"])["name"]))
 
-    #Select Device
-    print (textcolors.blue + "Available devices:\n" + textcolors.end)
-    for i in range(0, p.get_device_count()):
-        info = p.get_device_info_by_index(i)
-        print (textcolors.green + str(info["index"]) + textcolors.end + ": \t %s \n \t %s \n" % (info["name"], p.get_host_api_info_by_index(info["hostApi"])["name"]))
+            if default_device_index == -1:
+                default_device_index = info["index"]
 
+        #Handle no devices available
         if default_device_index == -1:
-            default_device_index = info["index"]
-
-    #Handle no devices available
-    if default_device_index == -1:
-        print (textcolors.fail + "No device available. Quitting." + textcolors.end)
-        exit()
+            print (textcolors.fail + "No device available. Quitting." + textcolors.end)
+            exit()
 
 
-    #Get input or default
-    device_id = int(input("Choose device [" + textcolors.blue + str(default_device_index) + textcolors.end + "]: ") or default_device_index)
-    print ("")
-
+        #Get input or default
+        device_id = int(input("Choose device [" + textcolors.blue + str(default_device_index) + textcolors.end + "]: ") or default_device_index)
+        print ("")
+    else:
+        defualt_device_name = p.get_device_info_by_index(default_device_index)['name']
+        for i in range(0, p.get_device_count()):
+            info = p.get_device_info_by_index(i)
+            if info["name"] == defualt_device_name and p.get_host_api_info_by_index(info["hostApi"])["name"] == 'Windows WASAPI':
+                device_id = i;
+                break
+                
     #Get device info
     try:
         device_info = p.get_device_info_by_index(device_id)
@@ -76,7 +90,7 @@ def start_record(audioname):
             exit()
 
     recordtime = int(input("Record time in seconds [" + textcolors.blue + str(recordtime) + textcolors.end + "]: ") or recordtime)
-    print(device_info["defaultSampleRate"])
+    #print(device_info["defaultSampleRate"])
     #Open stream
     channelcount = device_info["maxInputChannels"] if (device_info["maxOutputChannels"] < device_info["maxInputChannels"]) else device_info["maxOutputChannels"]
     stream = p.open(format = pyaudio.paInt16,
